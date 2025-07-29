@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="style.css" />
+
+  <title>Chat Room</title>
+</head>
+<body>  
+  <script>
+  let currentUser;
+
+  fetch('/session-user')
+    .then(res => res.json())
+    .then(data => {
+      currentUser = data.username;
+
+      const socket = new WebSocket("ws://localhost:3000");
+
+      socket.onopen = () => {
+        socket.send(JSON.stringify({ type: "join", username: currentUser, room: "general" }));
+      };
+
+      socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        const isSelf = data.user === currentUser;
+        const msgClass = isSelf ? 'message-self' : 'message-other';
+
+        const msgDiv = document.getElementById("messages");
+        const msgEl = document.createElement("div");
+        msgEl.className = msgClass;
+        msgEl.innerHTML = `<b>${data.user}</b> [${data.timestamp}]: ${data.message}`;
+        msgDiv.appendChild(msgEl);
+        msgDiv.scrollTop = msgDiv.scrollHeight;
+      };
+
+      window.sendMessage = () => {
+        const input = document.getElementById("messageInput");
+        const message = input.value.trim();
+        if (message && socket.readyState === WebSocket.OPEN) {
+          socket.send(JSON.stringify({ type: "chat", message }));
+          input.value = "";
+        }
+      };
+    });
+</script>
+<div id="chat">
+  <p id="welcome"></p>
+  <div id="messages"></div>
+  <input type="text" id="messageInput" placeholder="Type your message..." />
+  <button onclick="sendMessage()">Send</button>
+  <br><br>
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-left: 80%;">
+  <a href="/logout" id="logoutBtn">Logout</a>
+</div>
+</div>
+</body>
+
+</html>
