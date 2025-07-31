@@ -1,29 +1,43 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="auth-container">
-    <form method="POST" action="/login" class="auth-card">
-      <h2>Welcome Back 👋 </h2>
-      <p class="sub-text" style="font-size: 20px; opacity: 80%; align-self:auto;">Login to your chat account</p>
-      
-      <input type="text" name="username" placeholder="👤 Username" required />
-      <input type="password" name="password" placeholder="🔐 Password" required />
-      
-      <button type="submit">🔓 Login</button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="brand">
+      <span class="logo-icon">💬</span><span class="logo-text">Chattrex</span>
+    </div>
 
-      <p class="swap-link">Don't have an account? <a href="/register.html">Register</a></p>
-      
-    </form>
-<footer class="footer" style="color: aliceblue;">
-  <p>© 2025 Aniket Gavali. All rights reserved.</p>
-</footer>
+    <div class="auth-container">
+      <form method="POST" action="/login" class="auth-card">
+        <h2>Welcome Back 👋</h2>
+        <p
+          class="sub-text"
+          style="font-size: 20px; opacity: 80%; align-self: auto"
+        >
+          Login to your chat account
+        </p>
 
-  </div>
-</body>
+        <input type="text" name="username" placeholder="👤 Username" required />
+        <input
+          type="password"
+          name="password"
+          placeholder="🔐 Password"
+          required
+        />
+
+        <button type="submit">🔓 Login</button>
+
+        <p class="swap-link">
+          Don't have an account? <a href="/register.html">Register</a>
+        </p>
+      </form>
+      <footer class="footer" style="color: aliceblue">
+        <p>© 2025 Aniket Gavali. All rights reserved.</p>
+      </footer>
+    </div>
+  </body>
 </html>

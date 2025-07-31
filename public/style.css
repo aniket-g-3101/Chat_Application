@@ -508,21 +508,21 @@ form p.error {
   body {
     padding: 15px;
   }
-  
+
   #login, #chat {
     padding: 30px 25px;
     border-radius: 14px;
   }
-  
+
   .auth-card {
     padding: 40px 30px;
     border-radius: 14px;
   }
-  
+
   #welcome {
     font-size: 20px;
   }
-  
+
   .auth-card h2 {
     font-size: 26px;
   }
@@ -541,5 +541,164 @@ form p.error {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}  
+/* ✅ Improved Mobile Layout for Better Look */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+    flex-direction: column;
+    align-items: center;
+    background-size: cover;
+    min-height: 100vh;
+  }
+
+  #login,
+  #chat,
+  .auth-card {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 20px 16px;
+    border-radius: 14px;
+    box-shadow: none;
+  }
+
+  #messages {
+    height: 320px;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 10px;
+  }
+
+  #messageInput {
+    font-size: 14px;
+    padding: 14px 16px;
+    border-radius: 12px;
+  }
+
+  button {
+    font-size: 14px;
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  #inputArea {
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  #logoutBtn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    text-align: center;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+
+  .auth-card h2 {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+
+  .sub-text {
+    font-size: 13px;
+    margin-bottom: 25px;
+  }
+
+  form input,
+  .auth-card input {
+    font-size: 14px;
+    padding: 14px 16px;
+    border-radius: 12px;
+  }
+
+  form button,
+  .auth-card button {
+    font-size: 15px;
+    padding: 14px;
+    margin-top: 10px;
+    border-radius: 12px;
+  }
+
+  .message-self,
+  .message-other {
+    margin: 10px 0;
+    padding: 10px 14px;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .message-self {
+    margin-left: 20%;
+  }
+
+  .message-other {
+    margin-right: 20%;
+  }
+
+  #welcome {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+}
+#brand {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  z-index: 1000;
+  font-family: 'Segoe UI', 'Inter', sans-serif;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.15);
+  padding: 6px 14px;
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.logo-icon {
+  font-size: 24px;
+  margin-right: 6px;
+  color: #ffffff;
+  animation: pulseIcon 2s infinite;
+}
+
+.logo-text {
+  font-size: 20px;
+  font-weight: 800;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+@keyframes pulseIcon {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.85;
+  }
+}
+
+/* Mobile adjustment */
+@media (max-width: 480px) {
+  #brand {
+    top: 15px;
+    left: 12px;
+    padding: 4px 10px;
+  }
+
+  .logo-icon {
+    font-size: 20px;
+  }
+
+  .logo-text {
+    font-size: 18px;
   }
 }

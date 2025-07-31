@@ -1,58 +1,79 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <link rel="stylesheet" href="style.css" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>--Chattrex--</title>
+  </head>
+  <body>
+    <div id="brand">
+      <span class="logo-icon">💬</span><span class="logo-text">Chattrex</span>
+    </div>
 
-  <title>Chat Room</title>
-</head>
-<body>  
-  <script>
-  let currentUser;
+    <script>
+      let currentUser;
 
-  fetch('/session-user')
-    .then(res => res.json())
-    .then(data => {
-      currentUser = data.username;
+      fetch("/session-user")
+        .then((res) => res.json())
+        .then((data) => {
+          currentUser = data.username;
 
-      const socket = new WebSocket("ws://localhost:3000");
+          // ✅ Fixed WebSocket URL to work on Replit & everywhere
+          const socket = new WebSocket(`wss://${window.location.host}`);
 
-      socket.onopen = () => {
-        socket.send(JSON.stringify({ type: "join", username: currentUser, room: "general" }));
-      };
+          socket.onopen = () => {
+            socket.send(
+              JSON.stringify({
+                type: "join",
+                username: currentUser,
+                room: "general",
+              }),
+            );
+          };
 
-      socket.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        const isSelf = data.user === currentUser;
-        const msgClass = isSelf ? 'message-self' : 'message-other';
+          socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            const isSelf = data.user === currentUser;
+            const msgClass = isSelf ? "message-self" : "message-other";
 
-        const msgDiv = document.getElementById("messages");
-        const msgEl = document.createElement("div");
-        msgEl.className = msgClass;
-        msgEl.innerHTML = `<b>${data.user}</b> [${data.timestamp}]: ${data.message}`;
-        msgDiv.appendChild(msgEl);
-        msgDiv.scrollTop = msgDiv.scrollHeight;
-      };
+            const msgDiv = document.getElementById("messages");
+            const msgEl = document.createElement("div");
+            msgEl.className = msgClass;
+            msgEl.innerHTML = `<b>${data.user}</b> [${data.timestamp}]: ${data.message}`;
+            msgDiv.appendChild(msgEl);
+            msgDiv.scrollTop = msgDiv.scrollHeight;
+          };
 
-      window.sendMessage = () => {
-        const input = document.getElementById("messageInput");
-        const message = input.value.trim();
-        if (message && socket.readyState === WebSocket.OPEN) {
-          socket.send(JSON.stringify({ type: "chat", message }));
-          input.value = "";
-        }
-      };
-    });
-</script>
-<div id="chat">
-  <p id="welcome"></p>
-  <div id="messages"></div>
-  <input type="text" id="messageInput" placeholder="Type your message..." />
-  <button onclick="sendMessage()">Send</button>
-  <br><br>
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-left: 80%;">
-  <a href="/logout" id="logoutBtn">Logout</a>
-</div>
-</div>
-</body>
+          window.sendMessage = () => {
+            const input = document.getElementById("messageInput");
+            const message = input.value.trim();
+            if (message && socket.readyState === WebSocket.OPEN) {
+              socket.send(JSON.stringify({ type: "chat", message }));
+              input.value = "";
+            }
+          };
+        });
+    </script>
 
+    <div id="chat">
+      <p id="welcome"></p>
+      <div id="messages"></div>
+      <input type="text" id="messageInput" placeholder="Type your message..." />
+      <button onclick="sendMessage()">Send</button>
+
+      <br /><br />
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 20px;
+          padding-left: 80%;
+        "
+      >
+        <a href="/logout" id="logoutBtn">Logout</a>
+      </div>
+    </div>
+  </body>
 </html>

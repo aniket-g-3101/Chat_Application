@@ -15,7 +15,8 @@ function joinChat() {
   document.getElementById("chat").style.display = "block";
   document.getElementById("roomName").textContent = `Room: ${room}`;
 
-  socket = new WebSocket("ws://localhost:3000");
+  // ✅ WebSocket now works on Replit or localhost
+  socket = new WebSocket(`wss://${window.location.host}`);
 
   socket.onopen = () => {
     socket.send(JSON.stringify({ type: "join", username, room }));
