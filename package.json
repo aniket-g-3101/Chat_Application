@@ -6,10 +6,11 @@
     "start": "node server/server.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "mysql2": "^3.3.3",
     "bcrypt": "^5.1.0",
+    "dotenv": "^17.2.1",
+    "express": "^4.18.2",
     "express-session": "^1.17.3",
-    "ws": "^8.13.0"      
+    "mysql2": "^3.3.3",
+    "ws": "^8.13.0"
   }
 }
