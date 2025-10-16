@@ -271,9 +271,9 @@
         });
     </script>
 
-    <!-- Main Chat Container -->
-    <main class="flex-1 flex flex-col h-[calc(100vh-88px)]">
-      <div class="flex-1 flex flex-col bg-white dark:bg-gray-800 shadow-lg">
+        <!-- Main Chat Container -->
+    <main class="flex-1 flex flex-col overflow-hidden">
+      <div class="flex-1 flex flex-col bg-white dark:bg-gray-800 shadow-lg overflow-hidden">
         <!-- Messages Container -->
         <div
           id="messages"
@@ -282,23 +282,23 @@
 
         <!-- Message Input -->
         <div
-          class="p-4 sm:p-6 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700"
+          class="p-3 sm:p-6 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700"
         >
           <div class="max-w-7xl mx-auto flex items-center gap-2">
             <input
               type="text"
               id="messageInput"
               placeholder="Type your message..."
-              class="flex-1 px-4 py-3 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-l-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 transition-colors"
+              class="flex-1 px-3 py-2.5 sm:px-4 sm:py-3 text-sm sm:text-base text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-l-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 transition-colors"
               onkeypress="if(event.key === 'Enter') sendMessage()"
             />
             <button
               onclick="sendMessage()"
-              class="btn-primary px-4 py-3 text-white font-medium rounded-r-lg flex items-center justify-center min-w-[80px]"
+              class="btn-primary px-3 py-2.5 sm:px-4 sm:py-3 text-white font-medium rounded-r-lg flex items-center justify-center gap-1 min-w-[70px] sm:min-w-[80px]"
             >
-              <span>Send</span>
+              <span class="text-sm sm:text-base">Send</span>
               <svg
-                class="w-5 h-5"
+                class="w-4 h-4 sm:w-5 sm:h-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -315,7 +315,6 @@
         </div>
       </div>
     </main>
-
     <script>
       // Theme Toggle Functionality
       const themeToggleBtn = document.getElementById("themeToggle");
