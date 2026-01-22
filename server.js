@@ -5,7 +5,7 @@ const mysql = require("mysql2");
 const WebSocket = require("ws");
 const http = require("http");
 const path = require("path");
-require("dotenv").config(); // Load environment variables from .env
+require("dotenv").config();
 
 const app = express();
 const server = http.createServer(app);
@@ -14,13 +14,14 @@ const wss = new WebSocket.Server({ server });
 // ===== Middleware =====
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(
-  session({
-    secret: "chatsecret",
-    resave: false,
-    saveUninitialized: true,
-  }),
-);
+
+const sessionMiddleware = session({
+  secret: "chatsecret",
+  resave: false,
+  saveUninitialized: true,
+});
+
+app.use(sessionMiddleware);
 
 // ===== Serve static frontend =====
 app.use(express.static(path.join(__dirname, "public")));
@@ -40,7 +41,7 @@ function handleDisconnect() {
   db.connect((err) => {
     if (err) {
       console.error("❌ MySQL reconnect error:", err.message);
-      setTimeout(handleDisconnect, 2000); // Retry after 2 seconds
+      setTimeout(handleDisconnect, 2000);
     } else {
       console.log("✅ Connected to MySQL");
     }
@@ -56,7 +57,6 @@ function handleDisconnect() {
   });
 }
 
-// Initialize MySQL connection
 handleDisconnect();
 
 // ===== Routes =====
@@ -101,10 +101,25 @@ app.get("/chat.html", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "chat.html"));
 });
 
+// Load message history (last 100 messages)
+app.get("/messages", (req, res) => {
+  if (!req.session.user) return res.status(401).json({ error: "Not authenticated" });
+  
+  const sql = "SELECT username, message, timestamp FROM messages ORDER BY id DESC LIMIT 100";
+  
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Error loading messages:", err);
+      return res.status(500).json({ error: "Failed to load messages" });
+    }
+    // Reverse to show oldest first
+    res.json(results.reverse());
+  });
+});
+
 // ===== WebSocket Logic =====
 wss.on("connection", (ws) => {
   let username = null;
-  let room = "general";
 
   console.log("📡 New WebSocket connection");
 
@@ -114,35 +129,70 @@ wss.on("connection", (ws) => {
 
       if (data.type === "join") {
         username = data.username;
-        room = data.room;
-        console.log(`${username} joined room: ${room}`);
+        console.log(`✅ ${username} joined the chat`);
+        
+        // Send confirmation back to the client
+        ws.send(JSON.stringify({
+          type: "joined",
+          username: username
+        }));
+        
       } else if (data.type === "chat") {
+        if (!username) {
+          console.error("❌ Message from unauthenticated user");
+          return;
+        }
+
         const timestamp = new Date().toLocaleTimeString();
-        const saveSql =
-          "INSERT INTO messages (username, room, message, timestamp) VALUES (?, ?, ?, ?)";
-        db.query(saveSql, [username, room, data.message, timestamp]);
-
-        const msgData = {
-          user: username,
-          message: data.message,
-          timestamp,
-        };
-
-        // Broadcast to all
-        wss.clients.forEach((client) => {
-          if (client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify(msgData));
+        const saveSql = "INSERT INTO messages (username, room, message, timestamp) VALUES (?, ?, ?, ?)";
+        
+        db.query(saveSql, [username, "general", data.message, timestamp], (err) => {
+          if (err) {
+            console.error("❌ Failed to save message:", err);
+            ws.send(JSON.stringify({
+              type: "error",
+              message: "Failed to send message"
+            }));
+            return;
           }
+
+          const msgData = {
+            type: "message",
+            user: username,
+            message: data.message,
+            timestamp
+          };
+
+          // Broadcast to ALL connected clients
+          wss.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+              client.send(JSON.stringify(msgData));
+            }
+          });
+          
+          console.log(`📨 Message sent by ${username}`);
         });
       }
     } catch (err) {
       console.error("❌ WebSocket error:", err);
+      ws.send(JSON.stringify({
+        type: "error",
+        message: "Invalid message format"
+      }));
     }
+  });
+
+  ws.on("close", () => {
+    console.log(`📴 ${username || "Unknown user"} disconnected`);
+  });
+
+  ws.on("error", (err) => {
+    console.error("❌ WebSocket connection error:", err);
   });
 });
 
 // ===== Start Server =====
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });

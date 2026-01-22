@@ -185,93 +185,7 @@
       </div>
     </header>
 
-    <script>
-      let currentUser;
-
-      fetch("/session-user")
-        .then((res) => res.json())
-        .then((data) => {
-          currentUser = data.username;
-          document.getElementById(
-            "welcome"
-          ).textContent = `Welcome, ${currentUser}!`;
-
-          // ✅ Fix: WebSocket works for local and deployed
-          const protocol = window.location.protocol === "https:" ? "wss" : "ws";
-          const socket = new WebSocket(`${protocol}://${window.location.host}`);
-
-          socket.onopen = () => {
-            socket.send(
-              JSON.stringify({
-                type: "join",
-                username: currentUser,
-                room: "general",
-              })
-            );
-          };
-
-          socket.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            const isSelf = data.user === currentUser;
-
-            const msgDiv = document.getElementById("messages");
-            const msgEl = document.createElement("div");
-            msgEl.className = `message flex items-start gap-3 mb-4 ${
-              isSelf ? "flex-row-reverse" : ""
-            }`;
-
-            const avatar = document.createElement("div");
-            avatar.className =
-              "w-8 h-8 rounded-full flex items-center justify-center text-white font-medium text-sm";
-            avatar.style.background = `hsl(${
-              Math.abs(
-                data.user
-                  .split("")
-                  .reduce((acc, char) => acc + char.charCodeAt(0), 0)
-              ) % 360
-            }, 70%, 50%)`;
-            avatar.textContent = data.user.charAt(0).toUpperCase();
-
-            const contentDiv = document.createElement("div");
-            contentDiv.className = `max-w-[70%] ${
-              isSelf ? "items-end" : "items-start"
-            }`;
-
-            const username = document.createElement("div");
-            username.className =
-              "text-xs text-gray-500 dark:text-gray-400 mb-1";
-            username.textContent = `${data.user} • ${data.timestamp}`;
-
-            const messageContent = document.createElement("div");
-            messageContent.className = `rounded-2xl px-4 py-2 ${
-              isSelf
-                ? "bg-blue-500 text-white"
-                : "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
-            }`;
-            messageContent.textContent = data.message;
-
-            contentDiv.appendChild(username);
-            contentDiv.appendChild(messageContent);
-
-            msgEl.appendChild(avatar);
-            msgEl.appendChild(contentDiv);
-
-            msgDiv.appendChild(msgEl);
-            msgDiv.scrollTop = msgDiv.scrollHeight;
-          };
-
-          window.sendMessage = () => {
-            const input = document.getElementById("messageInput");
-            const message = input.value.trim();
-            if (message && socket.readyState === WebSocket.OPEN) {
-              socket.send(JSON.stringify({ type: "chat", message }));
-              input.value = "";
-            }
-          };
-        });
-    </script>
-
-        <!-- Main Chat Container -->
+    <!-- Main Chat Container -->
     <main class="flex-1 flex flex-col overflow-hidden">
       <div class="flex-1 flex flex-col bg-white dark:bg-gray-800 shadow-lg overflow-hidden">
         <!-- Messages Container -->
@@ -315,8 +229,161 @@
         </div>
       </div>
     </main>
+
+    <!-- Chat Script -->
     <script>
-      // Theme Toggle Functionality
+      let currentUser;
+      let socket;
+
+      // Load message history
+      async function loadMessageHistory() {
+        try {
+          const response = await fetch('/messages');
+          const messages = await response.json();
+          
+          messages.forEach(msg => {
+            displayMessage(msg.username, msg.message, msg.timestamp);
+          });
+        } catch (err) {
+          console.error('Failed to load message history:', err);
+        }
+      }
+
+      // Display a message in the chat
+      function displayMessage(user, message, timestamp) {
+        const isSelf = user === currentUser;
+        const msgDiv = document.getElementById("messages");
+        const msgEl = document.createElement("div");
+        
+        msgEl.className = `message flex items-start gap-3 mb-4 ${
+          isSelf ? "flex-row-reverse" : ""
+        }`;
+
+        const avatar = document.createElement("div");
+        avatar.className =
+          "w-8 h-8 rounded-full flex items-center justify-center text-white font-medium text-sm flex-shrink-0";
+        avatar.style.background = `hsl(${
+          Math.abs(
+            user
+              .split("")
+              .reduce((acc, char) => acc + char.charCodeAt(0), 0)
+          ) % 360
+        }, 70%, 50%)`;
+        avatar.textContent = user.charAt(0).toUpperCase();
+
+        const contentDiv = document.createElement("div");
+        contentDiv.className = `max-w-[70%] ${
+          isSelf ? "items-end" : "items-start"
+        }`;
+
+        const username = document.createElement("div");
+        username.className = "text-xs text-gray-500 dark:text-gray-400 mb-1";
+        username.textContent = `${user} • ${timestamp}`;
+
+        const messageContent = document.createElement("div");
+        messageContent.className = `rounded-2xl px-4 py-2 break-words ${
+          isSelf
+            ? "bg-blue-500 text-white"
+            : "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
+        }`;
+        messageContent.textContent = message;
+
+        contentDiv.appendChild(username);
+        contentDiv.appendChild(messageContent);
+
+        msgEl.appendChild(avatar);
+        msgEl.appendChild(contentDiv);
+
+        msgDiv.appendChild(msgEl);
+        msgDiv.scrollTop = msgDiv.scrollHeight;
+      }
+
+      // Connect to WebSocket
+      function connectWebSocket() {
+        const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+        socket = new WebSocket(`${protocol}://${window.location.host}`);
+
+        socket.onopen = () => {
+          console.log('✅ WebSocket connected');
+          socket.send(
+            JSON.stringify({
+              type: "join",
+              username: currentUser
+            })
+          );
+        };
+
+        socket.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            
+            if (data.type === "message") {
+              displayMessage(data.user, data.message, data.timestamp);
+            } else if (data.type === "joined") {
+              console.log(`✅ Joined as ${data.username}`);
+            } else if (data.type === "error") {
+              alert(`Error: ${data.message}`);
+            }
+          } catch (err) {
+            console.error('Error parsing message:', err);
+          }
+        };
+
+        socket.onerror = (error) => {
+          console.error('❌ WebSocket error:', error);
+        };
+
+        socket.onclose = () => {
+          console.log('📴 WebSocket disconnected');
+          setTimeout(() => {
+            console.log('🔄 Attempting to reconnect...');
+            connectWebSocket();
+          }, 3000);
+        };
+      }
+
+      // Send message function
+      function sendMessage() {
+        const input = document.getElementById("messageInput");
+        const message = input.value.trim();
+        
+        if (!message) return;
+        
+        if (!socket || socket.readyState !== WebSocket.OPEN) {
+          alert('Not connected to chat. Please wait...');
+          return;
+        }
+        
+        socket.send(JSON.stringify({ type: "chat", message }));
+        input.value = "";
+      }
+
+      // Initialize chat
+      fetch("/session-user")
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data.username) {
+            window.location.href = '/login.html';
+            return;
+          }
+          
+          currentUser = data.username;
+          document.getElementById("welcome").textContent = `Welcome, ${currentUser}!`;
+          
+          // Load message history first
+          loadMessageHistory();
+          
+          // Then connect WebSocket
+          connectWebSocket();
+        })
+        .catch(err => {
+          console.error('Failed to load session:', err);
+          window.location.href = '/login.html';
+        });
+    </script>
+
+    <!-- Theme Toggle Script -->
+    <script>
       const themeToggleBtn = document.getElementById("themeToggle");
       const sunIcon = document.getElementById("sunIcon");
       const moonIcon = document.getElementById("moonIcon");
