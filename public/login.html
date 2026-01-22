@@ -51,6 +51,18 @@
       .dark .google-btn:hover {
         background: #374151;
       }
+      .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255,255,255,.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
     </style>
   </head>
 
@@ -138,10 +150,12 @@
           class="google-btn w-full flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800"
         >
           <img
+            id="googleIcon"
             src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
             class="w-5 h-5"
           />
           <span
+            id="googleBtnText"
             class="text-sm sm:text-base font-medium text-gray-700 dark:text-white"
             >Continue with Google</span
           >
@@ -195,10 +209,32 @@
 
       const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-      // EMAIL LOGIN
       const form = document.getElementById("loginForm");
       const errorMsg = document.getElementById("errorMsg");
+      const googleLoginBtn = document.getElementById("googleLoginBtn");
+      const googleIcon = document.getElementById("googleIcon");
+      const googleBtnText = document.getElementById("googleBtnText");
 
+      // HANDLE REDIRECT RESULT FIRST (MOBILE)
+      async function handleRedirectResult() {
+        try {
+          const result = await getRedirectResult(auth);
+          if (result?.user) {
+            showLoading(true);
+            await saveUser(result.user);
+            window.location.href = "/chat.html";
+          }
+        } catch (err) {
+          console.error("Redirect error:", err);
+          errorMsg.textContent = err.message;
+          errorMsg.classList.remove("hidden");
+        }
+      }
+
+      // Check for redirect result on page load
+      handleRedirectResult();
+
+      // EMAIL LOGIN
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
         errorMsg.classList.add("hidden");
@@ -213,41 +249,56 @@
       });
 
       // GOOGLE LOGIN BUTTON
-      document
-        .getElementById("googleLoginBtn")
-        .addEventListener("click", async () => {
-          try {
-            if (isMobile) {
-              await signInWithRedirect(auth, provider);
-            } else {
-              const result = await signInWithPopup(auth, provider);
-              await saveUser(result.user);
-              window.location.href = "/chat.html";
-            }
-          } catch (err) {
-            alert(err.message);
+      googleLoginBtn.addEventListener("click", async () => {
+        errorMsg.classList.add("hidden");
+        
+        try {
+          if (isMobile) {
+            showLoading(true);
+            await signInWithRedirect(auth, provider);
+          } else {
+            showLoading(true);
+            const result = await signInWithPopup(auth, provider);
+            await saveUser(result.user);
+            window.location.href = "/chat.html";
           }
-        });
+        } catch (err) {
+          showLoading(false);
+          errorMsg.textContent = err.message;
+          errorMsg.classList.remove("hidden");
+        }
+      });
 
-      // HANDLE REDIRECT RESULT (MOBILE)
-      const redirectResult = await getRedirectResult(auth);
-      if (redirectResult?.user) {
-        await saveUser(redirectResult.user);
-        window.location.href = "/chat.html";
+      function showLoading(loading) {
+        if (loading) {
+          googleIcon.style.display = "none";
+          googleBtnText.innerHTML = '<span class="loading"></span>';
+          googleLoginBtn.disabled = true;
+          googleLoginBtn.style.opacity = "0.6";
+        } else {
+          googleIcon.style.display = "block";
+          googleBtnText.textContent = "Continue with Google";
+          googleLoginBtn.disabled = false;
+          googleLoginBtn.style.opacity = "1";
+        }
       }
 
       async function saveUser(user) {
-        await setDoc(
-          doc(db, "users", user.uid),
-          {
-            username: user.displayName,
-            email: user.email,
-            photoURL: user.photoURL,
-            provider: "google",
-            lastLogin: new Date(),
-          },
-          { merge: true }
-        );
+        try {
+          await setDoc(
+            doc(db, "users", user.uid),
+            {
+              username: user.displayName,
+              email: user.email,
+              photoURL: user.photoURL,
+              provider: "google",
+              lastLogin: new Date(),
+            },
+            { merge: true }
+          );
+        } catch (err) {
+          console.error("Error saving user:", err);
+        }
       }
     </script>
   </body>
