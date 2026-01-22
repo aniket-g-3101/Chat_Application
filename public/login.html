@@ -217,17 +217,30 @@
 
       // HANDLE REDIRECT RESULT FIRST (MOBILE)
       async function handleRedirectResult() {
-        try {
-          const result = await getRedirectResult(auth);
-          if (result?.user) {
+        // Prevent infinite loop - only check redirect result once
+        const redirectChecked = sessionStorage.getItem('redirectChecked');
+        
+        if (!redirectChecked) {
+          sessionStorage.setItem('redirectChecked', 'true');
+          
+          try {
             showLoading(true);
-            await saveUser(result.user);
-            window.location.href = "/chat.html";
+            const result = await getRedirectResult(auth);
+            
+            if (result?.user) {
+              await saveUser(result.user);
+              sessionStorage.removeItem('redirectChecked');
+              window.location.href = "/chat.html";
+            } else {
+              showLoading(false);
+            }
+          } catch (err) {
+            showLoading(false);
+            console.error("Redirect error:", err);
+            errorMsg.textContent = err.message;
+            errorMsg.classList.remove("hidden");
+            sessionStorage.removeItem('redirectChecked');
           }
-        } catch (err) {
-          console.error("Redirect error:", err);
-          errorMsg.textContent = err.message;
-          errorMsg.classList.remove("hidden");
         }
       }
 
