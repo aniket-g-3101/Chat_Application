@@ -191,6 +191,12 @@
         setDoc,
       } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
+      import {
+  setPersistence,
+  browserLocalPersistence
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+
       // 🔴 YOUR FIREBASE CONFIG
       const firebaseConfig = {
         apiKey: "AIzaSyDrQdx0vy_hDvb7jO3Z12YXrOFkl1Zl-jw",
@@ -217,30 +223,17 @@
 
       // HANDLE REDIRECT RESULT FIRST (MOBILE)
       async function handleRedirectResult() {
-        // Prevent infinite loop - only check redirect result once
-        const redirectChecked = sessionStorage.getItem('redirectChecked');
-        
-        if (!redirectChecked) {
-          sessionStorage.setItem('redirectChecked', 'true');
-          
-          try {
+        try {
+          const result = await getRedirectResult(auth);
+          if (result?.user) {
             showLoading(true);
-            const result = await getRedirectResult(auth);
-            
-            if (result?.user) {
-              await saveUser(result.user);
-              sessionStorage.removeItem('redirectChecked');
-              window.location.href = "/chat.html";
-            } else {
-              showLoading(false);
-            }
-          } catch (err) {
-            showLoading(false);
-            console.error("Redirect error:", err);
-            errorMsg.textContent = err.message;
-            errorMsg.classList.remove("hidden");
-            sessionStorage.removeItem('redirectChecked');
+            await saveUser(result.user);
+            window.location.href = "/chat.html";
           }
+        } catch (err) {
+          console.error("Redirect error:", err);
+          errorMsg.textContent = err.message;
+          errorMsg.classList.remove("hidden");
         }
       }
 
