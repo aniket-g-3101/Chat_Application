@@ -235,20 +235,6 @@
       let currentUser;
       let socket;
 
-      // Load message history
-      async function loadMessageHistory() {
-        try {
-          const response = await fetch('/messages');
-          const messages = await response.json();
-          
-          messages.forEach(msg => {
-            displayMessage(msg.username, msg.message, msg.timestamp);
-          });
-        } catch (err) {
-          console.error('Failed to load message history:', err);
-        }
-      }
-
       // Display a message in the chat
       function displayMessage(user, message, timestamp) {
         const isSelf = user === currentUser;
@@ -369,9 +355,6 @@
           
           currentUser = data.username;
           document.getElementById("welcome").textContent = `Welcome, ${currentUser}!`;
-          
-          // // Load message history first
-          // loadMessageHistory();
           
           // Then connect WebSocket
           connectWebSocket();

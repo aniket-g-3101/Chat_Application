@@ -101,22 +101,6 @@ app.get("/chat.html", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "chat.html"));
 });
 
-// Load message history (last 100 messages)
-app.get("/messages", (req, res) => {
-  if (!req.session.user) return res.status(401).json({ error: "Not authenticated" });
-  
-  const sql = "SELECT username, message, timestamp FROM messages ORDER BY id DESC LIMIT 100";
-  
-  db.query(sql, (err, results) => {
-    if (err) {
-      console.error("Error loading messages:", err);
-      return res.status(500).json({ error: "Failed to load messages" });
-    }
-    // Reverse to show oldest first
-    res.json(results.reverse());
-  });
-});
-
 // ===== WebSocket Logic =====
 wss.on("connection", (ws) => {
   let username = null;
