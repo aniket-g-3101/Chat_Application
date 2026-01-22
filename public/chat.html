@@ -2,82 +2,81 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <title>Chat | Chattrexx</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-      tailwind.config = {
-        darkMode: "class",
-      };
-
-      // Theme handling
-      if (
-        localStorage.theme === "dark" ||
-        (!("theme" in localStorage) &&
-          window.matchMedia("(prefers-color-scheme: dark)").matches)
-      ) {
-        document.documentElement.classList.add("dark");
-        document.body.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-        document.body.classList.remove("dark");
-      }
+      tailwind.config = { darkMode: "class" };
     </script>
+
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
       * {
         font-family: "Inter", sans-serif;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
 
       html {
-        transition: background-color 0.3s ease;
+        height: 100%;
+        overflow: hidden;
       }
 
       body {
-        background: #f8fafc;
+        height: 100%;
+        overflow: hidden;
+        background: linear-gradient(to bottom right, #f8fafc, #e2e8f0);
       }
 
       body.dark {
-        background: #0f172a;
+        background: linear-gradient(to bottom right, #0f172a, #1e293b);
       }
 
-      .card {
-        background: white;
-        transition: all 0.3s ease;
+      .app-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
       }
 
-      .dark .card {
-        background: #1e293b;
+      .header {
+        flex-shrink: 0;
       }
 
-      .chat-container {
-        height: calc(100vh - 180px);
+      .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        overflow: hidden;
       }
 
       .messages-container {
-        scrollbar-width: thin;
-        scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
       }
 
-      .messages-container::-webkit-scrollbar {
-        width: 6px;
-      }
-
-      .messages-container::-webkit-scrollbar-track {
-        background: transparent;
-      }
-
-      .messages-container::-webkit-scrollbar-thumb {
-        background-color: rgba(156, 163, 175, 0.5);
-        border-radius: 20px;
+      .input-container {
+        flex-shrink: 0;
+        padding-bottom: env(safe-area-inset-bottom, 0);
       }
 
       .message {
-        animation: messageSlide 0.3s ease-out;
+        animation: slideIn 0.3s ease-out;
       }
 
-      @keyframes messageSlide {
+      @keyframes slideIn {
         from {
           opacity: 0;
           transform: translateY(10px);
@@ -94,311 +93,324 @@
       }
 
       .btn-primary:hover {
-        background: linear-gradient(135deg, #2563eb, #1d4ed8);
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+      }
+
+      .btn-primary:active {
+        transform: translateY(0);
+      }
+
+      .input-field {
+        transition: all 0.2s ease;
+      }
+
+      .input-field:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      /* Custom scrollbar */
+      .messages-container::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .messages-container::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .messages-container::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
+      }
+
+      .dark .messages-container::-webkit-scrollbar-thumb {
+        background: #475569;
+      }
+
+      /* iOS Safari specific fixes */
+      @supports (-webkit-touch-callout: none) {
+        .app-container {
+          height: -webkit-fill-available;
+        }
+      }
+
+      /* Prevent zoom on input focus on mobile */
+      @media screen and (max-width: 768px) {
+        input[type="text"] {
+          font-size: 16px !important;
+        }
       }
     </style>
   </head>
-  <body class="flex flex-col min-h-screen">
-    <!-- Header with Logo and Theme Toggle -->
-    <header
-      class="w-full py-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"
-    >
-      <div
-        class="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6"
+
+  <body>
+    <div class="app-container">
+      <!-- Header -->
+      <header
+        class="header py-3 sm:py-4 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 shadow-sm"
       >
-        <!-- Logo -->
-        <div class="flex items-center gap-2.5">
-          <div
-            class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-br from-blue-600 to-blue-500 flex items-center justify-center shadow-sm"
-          >
+        <div class="max-w-6xl mx-auto flex justify-between items-center px-4">
+          <div class="flex items-center gap-2">
             <svg
-              class="w-4 h-4 sm:w-5 sm:h-5 text-white"
-              fill="none"
-              stroke="currentColor"
+              class="w-6 h-6 sm:w-7 sm:h-7 flex-shrink-0"
               viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
             >
+              <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="#3b82f6" />
               <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                d="M2 17L12 22L22 17V12L12 17L2 12V17Z"
+                fill="#2563eb"
+                opacity="0.7"
               />
             </svg>
+            <h1
+              class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white"
+            >
+              Chattrexx
+            </h1>
           </div>
-          <h1
-            class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white tracking-tight"
-          >
-            Chattrexx
-          </h1>
-        </div>
-
-        <div class="flex items-center gap-4">
-          <span
-            id="welcome"
-            class="text-sm text-gray-600 dark:text-gray-400 hidden sm:inline"
-          ></span>
-
-          <!-- Theme Toggle Button -->
-          <button
-            id="themeToggle"
-            class="p-2 sm:p-2.5 rounded-lg bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-all border border-gray-200 dark:border-gray-700"
-          >
-            <svg
-              id="sunIcon"
-              class="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 dark:text-gray-300 hidden"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-              />
-            </svg>
-            <svg
-              id="moonIcon"
-              class="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 dark:text-gray-300"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-              />
-            </svg>
-          </button>
-
-          <a
-            href="/logout"
-            class="btn-primary text-sm font-medium text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all"
-          >
-            Logout
-          </a>
-        </div>
-      </div>
-    </header>
-
-    <!-- Main Chat Container -->
-    <main class="flex-1 flex flex-col overflow-hidden">
-      <div class="flex-1 flex flex-col bg-white dark:bg-gray-800 shadow-lg overflow-hidden">
-        <!-- Messages Container -->
-        <div
-          id="messages"
-          class="flex-1 messages-container overflow-y-auto p-4 sm:p-6"
-        ></div>
-
-        <!-- Message Input -->
-        <div
-          class="p-3 sm:p-6 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700"
-        >
-          <div class="max-w-7xl mx-auto flex items-center gap-2">
-            <input
-              type="text"
-              id="messageInput"
-              placeholder="Type your message..."
-              class="flex-1 px-3 py-2.5 sm:px-4 sm:py-3 text-sm sm:text-base text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-l-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 transition-colors"
-              onkeypress="if(event.key === 'Enter') sendMessage()"
-            />
+          <div class="flex items-center gap-2 sm:gap-3">
+            <span
+              id="welcome"
+              class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 hidden sm:block truncate max-w-[100px] md:max-w-[200px]"
+            ></span>
             <button
-              onclick="sendMessage()"
-              class="btn-primary px-3 py-2.5 sm:px-4 sm:py-3 text-white font-medium rounded-r-lg flex items-center justify-center gap-1 min-w-[70px] sm:min-w-[80px]"
+              id="logoutBtn"
+              class="btn-primary px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-white text-xs sm:text-sm font-medium whitespace-nowrap"
             >
-              <span class="text-sm sm:text-base">Send</span>
-              <svg
-                class="w-4 h-4 sm:w-5 sm:h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                />
-              </svg>
+              Logout
             </button>
           </div>
         </div>
-      </div>
-    </main>
+      </header>
 
-    <!-- Chat Script -->
-    <script>
-      let currentUser;
-      let socket;
+      <!-- Main Content -->
+      <main class="main-content max-w-6xl mx-auto w-full">
+        <!-- Messages Area -->
+        <div class="messages-container">
+          <div id="messages" class="p-4 sm:p-6 space-y-3"></div>
+        </div>
 
-      // Display a message in the chat
-      function displayMessage(user, message, timestamp) {
-        const isSelf = user === currentUser;
-        const msgDiv = document.getElementById("messages");
-        const msgEl = document.createElement("div");
-        
-        msgEl.className = `message flex items-start gap-3 mb-4 ${
-          isSelf ? "flex-row-reverse" : ""
-        }`;
+        <!-- Input Area -->
+        <div
+          class="input-container p-3 sm:p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+        >
+          <div class="flex gap-2">
+            <input
+              id="messageInput"
+              type="text"
+              placeholder="Type your message..."
+              autocomplete="off"
+              class="input-field flex-1 px-3 sm:px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-white text-base"
+            />
+            <button
+              id="sendBtn"
+              type="button"
+              tabindex="-1"
+              class="btn-primary px-4 sm:px-6 py-2.5 rounded-lg text-white"
+            >
+              Send
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
 
-        const avatar = document.createElement("div");
-        avatar.className =
-          "w-8 h-8 rounded-full flex items-center justify-center text-white font-medium text-sm flex-shrink-0";
-        avatar.style.background = `hsl(${
-          Math.abs(
-            user
-              .split("")
-              .reduce((acc, char) => acc + char.charCodeAt(0), 0)
-          ) % 360
-        }, 70%, 50%)`;
-        avatar.textContent = user.charAt(0).toUpperCase();
+    <!-- FIREBASE CHAT LOGIC -->
+    <script type="module">
+      let shouldScrollAfterSend = false;
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+      import {
+        getFirestore,
+        collection,
+        addDoc,
+        query,
+        orderBy,
+        limit,
+        onSnapshot,
+        serverTimestamp,
+        Timestamp,
+      } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-        const contentDiv = document.createElement("div");
-        contentDiv.className = `max-w-[70%] ${
-          isSelf ? "items-end" : "items-start"
-        }`;
+      const firebaseConfig = {
+        apiKey: "AIzaSyDrQdx0vy_hDvb7jO3Z12YXrOFkl1Zl-jw",
+        authDomain: "chattrexx.firebaseapp.com",
+        projectId: "chattrexx",
+        storageBucket: "chattrexx.firebasestorage.app",
+        messagingSenderId: "23495067369",
+        appId: "1:23495067369:web:8140a94606b45c81d6d278",
+        measurementId: "G-5YKSCL74YK",
+      };
 
-        const username = document.createElement("div");
-        username.className = "text-xs text-gray-500 dark:text-gray-400 mb-1";
-        username.textContent = `${user} • ${timestamp}`;
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
 
-        const messageContent = document.createElement("div");
-        messageContent.className = `rounded-2xl px-4 py-2 break-words ${
-          isSelf
-            ? "bg-blue-500 text-white"
-            : "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
-        }`;
-        messageContent.textContent = message;
+      const messagesDiv = document.getElementById("messages");
+      const messagesContainer = document.querySelector(".messages-container");
+      const input = document.getElementById("messageInput");
+      const sendBtn = document.getElementById("sendBtn");
+      const welcome = document.getElementById("welcome");
 
-        contentDiv.appendChild(username);
-        contentDiv.appendChild(messageContent);
+      let currentUser = null;
 
-        msgEl.appendChild(avatar);
-        msgEl.appendChild(contentDiv);
-
-        msgDiv.appendChild(msgEl);
-        msgDiv.scrollTop = msgDiv.scrollHeight;
-      }
-
-      // Connect to WebSocket
-      function connectWebSocket() {
-        const protocol = window.location.protocol === "https:" ? "wss" : "ws";
-        socket = new WebSocket(`${protocol}://${window.location.host}`);
-
-        socket.onopen = () => {
-          console.log('✅ WebSocket connected');
-          socket.send(
-            JSON.stringify({
-              type: "join",
-              username: currentUser
-            })
-          );
-        };
-
-        socket.onmessage = (event) => {
-          try {
-            const data = JSON.parse(event.data);
-            
-            if (data.type === "message") {
-              displayMessage(data.user, data.message, data.timestamp);
-            } else if (data.type === "joined") {
-              console.log(`✅ Joined as ${data.username}`);
-            } else if (data.type === "error") {
-              alert(`Error: ${data.message}`);
-            }
-          } catch (err) {
-            console.error('Error parsing message:', err);
-          }
-        };
-
-        socket.onerror = (error) => {
-          console.error('❌ WebSocket error:', error);
-        };
-
-        socket.onclose = () => {
-          console.log('📴 WebSocket disconnected');
-          setTimeout(() => {
-            console.log('🔄 Attempting to reconnect...');
-            connectWebSocket();
-          }, 3000);
-        };
-      }
-
-      // Send message function
-      function sendMessage() {
-        const input = document.getElementById("messageInput");
-        const message = input.value.trim();
-        
-        if (!message) return;
-        
-        if (!socket || socket.readyState !== WebSocket.OPEN) {
-          alert('Not connected to chat. Please wait...');
+      // Auth guard
+      onAuthStateChanged(auth, (user) => {
+        if (!user) {
+          window.location.href = "/login.html";
           return;
         }
-        
-        socket.send(JSON.stringify({ type: "chat", message }));
-        input.value = "";
-      }
-
-      // Initialize chat
-      fetch("/session-user")
-        .then((res) => res.json())
-        .then((data) => {
-          if (!data.username) {
-            window.location.href = '/login.html';
-            return;
-          }
-          
-          currentUser = data.username;
-          document.getElementById("welcome").textContent = `Welcome, ${currentUser}!`;
-          
-          // Then connect WebSocket
-          connectWebSocket();
-        })
-        .catch(err => {
-          console.error('Failed to load session:', err);
-          window.location.href = '/login.html';
-        });
-    </script>
-
-    <!-- Theme Toggle Script -->
-    <script>
-      const themeToggleBtn = document.getElementById("themeToggle");
-      const sunIcon = document.getElementById("sunIcon");
-      const moonIcon = document.getElementById("moonIcon");
-
-      function updateTheme(isDark) {
-        if (isDark) {
-          document.documentElement.classList.add("dark");
-          document.body.classList.add("dark");
-          sunIcon.classList.remove("hidden");
-          moonIcon.classList.add("hidden");
-        } else {
-          document.documentElement.classList.remove("dark");
-          document.body.classList.remove("dark");
-          sunIcon.classList.add("hidden");
-          moonIcon.classList.remove("hidden");
-        }
-        localStorage.theme = isDark ? "dark" : "light";
-      }
-
-      // Initialize theme
-      const prefersDark = window.matchMedia(
-        "(prefers-color-scheme: dark)"
-      ).matches;
-      const savedTheme = localStorage.getItem("theme");
-      const isDark = savedTheme === "dark" || (!savedTheme && prefersDark);
-      updateTheme(isDark);
-
-      // Theme toggle click handler
-      themeToggleBtn.addEventListener("click", () => {
-        const isDark = !document.documentElement.classList.contains("dark");
-        updateTheme(isDark);
+        currentUser = user;
+        welcome.textContent = user.displayName || user.email;
+        listenForMessages();
       });
+
+      // Real-time messages listener
+      let isInitialLoad = true;
+
+      function listenForMessages() {
+        const q = query(
+          collection(db, "messages"),
+          orderBy("timestamp", "asc"),
+          limit(100)
+        );
+
+        onSnapshot(q, (snapshot) => {
+          snapshot.docChanges().forEach((change) => {
+            if (change.type === "added") {
+              const data = change.doc.data();
+              renderMessage(
+                data.username,
+                data.text,
+                data.timestamp?.toDate().toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              );
+            }
+          });
+
+          if (isInitialLoad) {
+            scrollToBottom();
+          } else if (shouldScrollAfterSend) {
+            scrollToBottom();
+            shouldScrollAfterSend = false;
+          } else if (isUserAtBottom()) {
+            // Someone else sent a message and user is already near bottom
+            scrollToBottom();
+          }
+
+          isInitialLoad = false;
+        });
+      }
+
+      // Check if user is at bottom of messages
+      function isUserAtBottom() {
+        const threshold = 100;
+        return (
+          messagesContainer.scrollHeight -
+            messagesContainer.scrollTop -
+            messagesContainer.clientHeight <
+          threshold
+        );
+      }
+
+      // Render message bubble
+      function renderMessage(user, text, time) {
+        const isSelf = user === (currentUser.displayName || currentUser.email);
+        const div = document.createElement("div");
+        div.className = `message ${isSelf ? "text-right" : "text-left"}`;
+
+        const sanitizedText = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+        div.innerHTML = `
+      <div class="text-xs text-gray-500 dark:text-gray-400 mb-1 ${
+        isSelf ? "mr-1" : "ml-1"
+      }">
+        ${user} ${time ? "• " + time : ""}
+      </div>
+      <div class="inline-block px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl max-w-[85%] sm:max-w-md lg:max-w-lg break-words shadow-sm ${
+        isSelf
+          ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white"
+          : "bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600"
+      }">
+        ${sanitizedText}
+      </div>
+    `;
+
+        messagesDiv.appendChild(div);
+      }
+
+      // Scroll to bottom helper
+      function scrollToBottom() {
+        requestAnimationFrame(() => {
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        });
+      }
+      async function sendMessage() {
+        const text = input.value.trim();
+        if (!text) return;
+
+        try {
+          const FIFTEEN_DAYS = 15 * 24 * 60 * 60 * 1000;
+
+          // Mark that this send came from the current user
+          shouldScrollAfterSend = true;
+
+          input.value = "";
+
+          await addDoc(collection(db, "messages"), {
+            text,
+            username: currentUser.displayName || currentUser.email,
+            timestamp: serverTimestamp(),
+            expireAt: Timestamp.fromMillis(Date.now() + FIFTEEN_DAYS),
+          });
+        } catch (error) {
+          console.error("Error sending message:", error);
+          input.value = text;
+          shouldScrollAfterSend = false;
+        }
+      }
+
+      // Event listeners
+      sendBtn.addEventListener("pointerdown", (e) => {
+        e.preventDefault();
+        sendMessage();
+      });
+
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+
+      input.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+
+      // Logout
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", async () => {
+          try {
+            await signOut(auth);
+            window.location.href = "/login.html";
+          } catch (error) {
+            console.error("Logout error:", error);
+          }
+        });
     </script>
   </body>
 </html>

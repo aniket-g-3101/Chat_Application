@@ -1,381 +1,258 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register | Chattrexx</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-      
-      * {
-        font-family: 'Inter', sans-serif;
-      }
 
-      html {
-        transition: background-color 0.3s ease;
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+      * {
+        font-family: "Inter", sans-serif;
       }
 
       body {
-        background: #f8fafc;
+        background: linear-gradient(to bottom right, #f8fafc, #e2e8f0);
       }
-
       body.dark {
-        background: #0f172a;
+        background: linear-gradient(to bottom right, #0f172a, #1e293b);
       }
 
       .card {
         background: white;
-        transition: all 0.3s ease;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
       }
-
       .dark .card {
         background: #1e293b;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
       }
 
-      .input-focus:focus {
+      .input-field {
+        transition: all 0.2s ease;
+      }
+      .input-field:focus {
+        outline: none;
         border-color: #3b82f6;
         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-      }
-
-      .dark .input-focus:focus {
-        border-color: #60a5fa;
-        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
       }
 
       .btn-primary {
         background: linear-gradient(135deg, #3b82f6, #2563eb);
         transition: all 0.2s ease;
       }
-
       .btn-primary:hover {
-        background: linear-gradient(135deg, #2563eb, #1d4ed8);
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-      }
-
-      .dark .btn-primary {
-        background: linear-gradient(135deg, #60a5fa, #3b82f6);
-      }
-
-      .dark .btn-primary:hover {
-        background: linear-gradient(135deg, #3b82f6, #2563eb);
-        box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
-      }
-
-      .fade-in {
-        animation: fadeIn 0.5s ease-out;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .strength-bar {
-        height: 4px;
-        border-radius: 2px;
-        transition: all 0.3s ease;
-        background: #e5e7eb;
-      }
-
-      .dark .strength-bar {
-        background: #374151;
-      }
-
-      .strength-weak { width: 33%; background: #ef4444; }
-      .strength-medium { width: 66%; background: #f59e0b; }
-      .strength-strong { width: 100%; background: #10b981; }
-
-      .checkmark {
-        transition: all 0.2s ease;
-      }
-
-      .requirement-met {
-        color: #10b981;
-      }
-
-      .dark .requirement-met {
-        color: #34d399;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
       }
     </style>
+
     <script>
-      tailwind.config = {
-        darkMode: 'class'
-      }
+      tailwind.config = { darkMode: "class" };
     </script>
   </head>
-  <body class="flex items-center justify-center min-h-screen">
-    
-    <!-- Header with Logo and Theme Toggle -->
-    <header class="absolute top-0 left-0 right-0 p-4 sm:p-6">
-      <div class="max-w-7xl mx-auto flex items-center justify-between ">
-        <!-- Logo -->
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-br from-blue-600 to-blue-500 flex items-center justify-center shadow-sm">
-            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
-          </div>
-          <h1 class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white tracking-tight">Chattrexx</h1>
-        </div>
 
-        <!-- Theme Toggle Button -->
-        <button id="themeToggle" class="p-2 sm:p-2.5 rounded-lg bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-all border border-gray-200 dark:border-gray-700">
-          <svg id="sunIcon" class="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 dark:text-gray-300 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-          </svg>
-          <svg id="moonIcon" class="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-          </svg>
-        </button>
+  <body
+    class="flex items-center justify-center min-h-screen p-4 sm:px-6 lg:px-8"
+  >
+    <!-- Logo in top left corner -->
+    <div class="fixed top-4 left-4 sm:top-6 sm:left-6 z-10">
+      <div
+        class="flex items-center gap-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm px-3 py-2 sm:px-4 sm:py-2 rounded-full shadow-lg border border-gray-200 dark:border-gray-700"
+      >
+        <svg
+          class="w-5 h-5 sm:w-6 sm:h-6"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="#3b82f6" />
+          <path
+            d="M2 17L12 22L22 17V12L12 17L2 12V17Z"
+            fill="#2563eb"
+            opacity="0.7"
+          />
+        </svg>
+        <span
+          class="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm"
+          >Chattrexx</span
+        >
       </div>
-    </header>
+    </div>
 
-    <!-- Main Container -->
-    <div class="w-full max-w-md px-4 sm:px-6 fade-in mt-24 sm:mt-8 mb-4 sm:mb-0">
+    <div class="w-11/12 max-w-sm mx-auto">
+      <div class="card rounded-2xl border border-gray-200 dark:border-gray-700">
+        <div class="p-5 sm:p-7">
+          <h2
+            class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white mb-2"
+          >
+            Create your account
+          </h2>
+          <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-5">
+            Join Chattrexx and start chatting
+          </p>
 
-      <!-- Auth Card -->
-      <div class="card shadow-lg rounded-2xl border border-gray-200 dark:border-gray-700">
-        <div class="p-5 sm:p-8">
-          <h2 class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white mb-2">Create your account</h2>
-          <p class="text-gray-600 dark:text-gray-400 text-sm mb-5 sm:mb-6">Join Chattrexx and start connecting with others</p>
-
-          <form method="POST" action="/register" class="space-y-3 sm:space-y-3">
-            
-            <!-- Username Input -->
+          <!-- REGISTER FORM -->
+          <form id="registerForm" class="space-y-4">
+            <!-- Username -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Username</label>
-              <input 
-                type="text" 
-                name="username" 
+              <label
+                class="block text-xs sm:text-sm mb-1 text-gray-700 dark:text-gray-300"
+                >Username</label
+              >
+              <input
+                type="text"
                 id="username"
                 required
-                class="input-focus w-full px-3.5 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none transition-all" 
+                class="input-field w-full px-3 sm:px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm sm:text-base"
                 placeholder="Choose a username"
               />
             </div>
-            
-            <!-- Password Input -->
+
+            <!-- Email -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Password</label>
-              <div class="relative">
-                <input 
-                type="password" 
-                name="password" 
+              <label
+                class="block text-xs sm:text-sm mb-1 text-gray-700 dark:text-gray-300"
+                >Email</label
+              >
+              <input
+                type="email"
+                id="email"
+                required
+                class="input-field w-full px-3 sm:px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm sm:text-base"
+                placeholder="Enter your email"
+              />
+            </div>
+
+            <!-- Password -->
+            <div>
+              <label
+                class="block text-xs sm:text-sm mb-1 text-gray-700 dark:text-gray-300"
+                >Password</label
+              >
+              <input
+                type="password"
                 id="password"
                 required
-                class="input-focus w-full px-3.5 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none transition-all pr-10" 
+                class="input-field w-full px-3 sm:px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm sm:text-base"
                 placeholder="Create a strong password"
-                />
-                
-                
-                <button type="button" id="togglePassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
-                  <svg id="eyeOpen" class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                  <svg id="eyeClosed" class="w-4 h-4 sm:w-5 sm:h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                  </svg>
-                </button>
-              </div>
+              />
             </div>
 
-            <!-- Confirm Password Input -->
+            <!-- Confirm Password -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Confirm Password</label>
-              <input 
-                type="password" 
-                name="confirm_password" 
+              <label
+                class="block text-xs sm:text-sm mb-1 text-gray-700 dark:text-gray-300"
+                >Confirm Password</label
+              >
+              <input
+                type="password"
                 id="confirmPassword"
                 required
-                class="input-focus w-full px-3.5 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none transition-all" 
-                placeholder="Confirm your password"
+                class="input-field w-full px-3 sm:px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm sm:text-base"
+                placeholder="Confirm password"
               />
-              <p id="passwordMatch" class="text-xs mt-1 hidden"></p>
             </div>
 
-            <!-- Terms & Conditions -->
-            <div class="flex items-start gap-2 text-sm pt-1">
-              <input type="checkbox" id="terms" required class="w-4 h-4 mt-0.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 flex-shrink-0 cursor-pointer" />
-              <label for="terms" class="text-gray-700 dark:text-gray-300 leading-snug">
-                I agree to the <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">Terms of Service</a> and <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">Privacy Policy</a>
-              </label>
-            </div>
+            <!-- Error -->
+            <p id="errorMsg" class="text-xs sm:text-sm text-red-500 hidden"></p>
 
-            <!-- Register Button -->
-            <button 
-              type="submit" 
-              class="btn-primary w-full text-white py-2.5 sm:py-3 rounded-lg font-medium shadow-sm text-sm sm:text-base"
+            <!-- Submit -->
+            <button
+              type="submit"
+              class="btn-primary w-full text-white py-2.5 rounded-lg font-medium text-sm sm:text-base"
             >
               Create Account
             </button>
-
-            <!-- Divider -->
-            <div class="relative my-5 sm:my-6">
-              <div class="absolute inset-0 flex items-center">
-                <div class="w-full border-t border-gray-300 dark:border-gray-600"></div>
-              </div>
-              <div class="relative flex justify-center text-xs sm:text-sm">
-                <span class="px-3 sm:px-4 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">Or sign up with</span>
-              </div>
-            </div>
-
-            <!-- Social Login -->
-            <div class="grid grid-cols-3 gap-2 sm:gap-3">
-              <button type="button" class="flex items-center justify-center py-2 sm:py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                </svg>
-              </button>
-              <button type="button" class="flex items-center justify-center py-2 sm:py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-900 dark:text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                </svg>
-              </button>
-              <button type="button" class="flex items-center justify-center py-2 sm:py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24">
-                  <path fill="currentColor" d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-                </svg>
-              </button>
-            </div>
           </form>
         </div>
 
-        <!-- Login Link -->
-        <div class="px-5 sm:px-8 py-3.5 sm:py-4 bg-gray-50 dark:bg-gray-800/50 rounded-b-2xl border-t border-gray-200 dark:border-gray-700">
-          <p class="text-center text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-            Already have an account? 
-            <a href="/login.html" class="text-blue-600 dark:text-blue-400 font-medium hover:underline ml-1">Sign in</a>
+        <!-- Login link -->
+        <div
+          class="px-5 sm:px-7 py-4 bg-gray-50 dark:bg-gray-800 text-center rounded-b-2xl border-t border-gray-200 dark:border-gray-700"
+        >
+          <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+            Already have an account?
+            <a
+              href="/login.html"
+              class="text-blue-600 dark:text-blue-400 font-medium hover:underline"
+            >
+              Sign in
+            </a>
           </p>
         </div>
       </div>
-
-      <!-- Footer -->
-      <footer class="mt-4 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200 dark:border-gray-800">
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3 text-xs text-gray-500 dark:text-gray-500">
-          <p class="text-center sm:text-left">© 2025 chattrexx</p>
-          <div class="flex gap-3 sm:gap-4">
-            <a href="#" class="hover:text-gray-700 dark:hover:text-gray-400 transition-colors">Privacy</a>
-            <a href="#" class="hover:text-gray-700 dark:hover:text-gray-400 transition-colors">Terms</a>
-            <a href="#" class="hover:text-gray-700 dark:hover:text-gray-400 transition-colors">Contact</a>
-          </div>
-        </div>
-      </footer>
     </div>
 
-    <script>
-      const themeToggle = document.getElementById('themeToggle');
-      const sunIcon = document.getElementById('sunIcon');
-      const moonIcon = document.getElementById('moonIcon');
-      const body = document.body;
+    <!-- FIREBASE REGISTER -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+      import {
+        getAuth,
+        createUserWithEmailAndPassword,
+        updateProfile,
+      } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        setDoc,
+      } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-      const savedTheme = localStorage.getItem('theme') || 'light';
-      if (savedTheme === 'dark') {
-        body.classList.add('dark');
-        sunIcon.classList.remove('hidden');
-        moonIcon.classList.add('hidden');
-      }
+      // 🔴 PASTE YOUR FIREBASE CONFIG HERE
+      const firebaseConfig = {
+        apiKey: "AIzaSyDrQdx0vy_hDvb7jO3Z12YXrOFkl1Zl-jw",
+        authDomain: "chattrexx.firebaseapp.com",
+        projectId: "chattrexx",
+        storageBucket: "chattrexx.firebasestorage.app",
+        messagingSenderId: "23495067369",
+        appId: "1:23495067369:web:8140a94606b45c81d6d278",
+        measurementId: "G-5YKSCL74YK",
+      };
 
-      themeToggle.addEventListener('click', () => {
-        body.classList.toggle('dark');
-        const isDark = body.classList.contains('dark');
-        
-        if (isDark) {
-          sunIcon.classList.remove('hidden');
-          moonIcon.classList.add('hidden');
-        } else {
-          sunIcon.classList.add('hidden');
-          moonIcon.classList.remove('hidden');
-        }
-        
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
-      });
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
 
-      // Password Toggle
-      const togglePassword = document.getElementById('togglePassword');
-      const passwordInput = document.getElementById('password');
-      const eyeOpen = document.getElementById('eyeOpen');
-      const eyeClosed = document.getElementById('eyeClosed');
+      const form = document.getElementById("registerForm");
+      const errorMsg = document.getElementById("errorMsg");
 
-      togglePassword.addEventListener('click', () => {
-        const type = passwordInput.type === 'password' ? 'text' : 'password';
-        passwordInput.type = type;
-        eyeOpen.classList.toggle('hidden');
-        eyeClosed.classList.toggle('hidden');
-      });
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        errorMsg.classList.add("hidden");
 
-      // Password Strength Checker
-      const strengthBar = document.getElementById('strengthBar');
-      const strengthText = document.getElementById('strengthText');
+        const username = document.getElementById("username").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+        const confirm = document.getElementById("confirmPassword").value;
 
-      passwordInput.addEventListener('input', (e) => {
-        const password = e.target.value;
-        let strength = 0;
-
-        // Check length
-        if (password.length >= 8) {
-          strength++;
-        }
-
-        // Check for number
-        if (/\d/.test(password)) {
-          strength++;
-        }
-
-        // Check for special character
-        if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-          strength++;
-        }
-
-        // Update strength bar
-        strengthBar.className = 'h-full rounded-2xl transition-all duration-300';
-        if (strength === 1) {
-          strengthBar.classList.add('strength-weak');
-          strengthText.textContent = 'Weak password';
-          strengthText.className = 'text-xs text-red-500 mt-1';
-        } else if (strength === 2) {
-          strengthBar.classList.add('strength-medium');
-          strengthText.textContent = 'Medium password';
-          strengthText.className = 'text-xs text-amber-500 mt-1';
-        } else if (strength === 3) {
-          strengthBar.classList.add('strength-strong');
-          strengthText.textContent = 'Strong password';
-          strengthText.className = 'text-xs text-green-500 mt-1';
-        } else {
-          strengthBar.style.width = '0';
-          strengthText.textContent = '';
-        }
-      });
-
-      // Confirm Password Match
-      const confirmPassword = document.getElementById('confirmPassword');
-      const passwordMatch = document.getElementById('passwordMatch');
-
-      confirmPassword.addEventListener('input', () => {
-        if (confirmPassword.value === '') {
-          passwordMatch.classList.add('hidden');
+        if (password !== confirm) {
+          errorMsg.textContent = "Passwords do not match";
+          errorMsg.classList.remove("hidden");
           return;
         }
 
-        passwordMatch.classList.remove('hidden');
-        if (passwordInput.value === confirmPassword.value) {
-          passwordMatch.textContent = '✓ Passwords match';
-          passwordMatch.className = 'text-xs text-green-500 mt-1.5';
-        } else {
-          passwordMatch.textContent = '✗ Passwords do not match';
-          passwordMatch.className = 'text-xs text-red-500 mt-1.5';
+        try {
+          const userCred = await createUserWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+
+          await updateProfile(userCred.user, {
+            displayName: username,
+          });
+
+          await setDoc(doc(db, "users", userCred.user.uid), {
+            username,
+            email,
+            createdAt: new Date(),
+          });
+
+          window.location.href = "/chat.html";
+        } catch (err) {
+          errorMsg.textContent = err.message;
+          errorMsg.classList.remove("hidden");
         }
       });
     </script>
