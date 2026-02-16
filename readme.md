@@ -1,19 +1,46 @@
-# Real-Time Chat App
+# Real-Time Chat Application (Firebase)
 
-## 📌 Features
-- Join chat rooms with a username
-- Real-time messaging using WebSockets
-- Create or join any room
-- Timestamped messages
+A fully Firebase-powered real-time chat application that enables users to communicate instantly with secure authentication and cloud-based message storage.
 
-## 🛠 Technologies
-- HTML, CSS, JavaScript (Frontend)
-- Node.js, WebSocket (Backend)
+This project was built to understand real-time databases, frontend development, and serverless architectures using Firebase.
 
-## 🚀 How to Run
-1. Install Node.js
-2. Run these commands:
-   ```bash
-   cd server
-   npm install
-   node server.js
+---
+
+## Features
+
+- Firebase Authentication for secure user login  
+- Real-time messaging using Firebase Firestore  
+- Responsive UI for mobile and desktop  
+- Instant message synchronization  
+- Session handling with Firebase  
+- Serverless architecture (no Node.js, WebSocket, or MySQL)
+
+---
+
+## Tech Stack
+
+Frontend:
+- HTML  
+- CSS  
+- JavaScript  
+
+Backend / Services:
+- Firebase Authentication  
+- Firebase Firestore  
+
+Tools:
+- Git  
+- GitHub  
+- VS Code  
+
+---
+
+
+## Learning Outcomes
+
+- Implemented Firebase Auth and Firestore  
+- Built real-time UI updates  
+- Practiced serverless app development  
+- Improved frontend architecture and state handling  
+
+---
